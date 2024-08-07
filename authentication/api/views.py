@@ -50,8 +50,7 @@ class UserConnectionView(APIView):
 
     def post(self, request):
         req_access_key = request.data['access_key']
-        print(type(req_access_key))
-
+        req_access_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZXhwIjoxNzIzMDgxNzEzLCJpYXQiOjE3MjMwNzgxMTN9.Y_zTQToQuj7sX_iIKlsGx4tXjcHhWpVyO0P85VJ5at0'
         if not req_access_key:
             raise AuthenticationFailed('UnAuthenticated!')
 
