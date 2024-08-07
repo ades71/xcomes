@@ -72,16 +72,13 @@ class LoginSerializer(serializers.Serializer):
         user.last_login = timezone.now()
 
         payload = {'id': user.id,
-                   'exp': datetime.datetime.now() + datetime.timedelta(minutes=60),
-                   'iat': datetime.datetime.now()
+                   'exp': int((datetime.datetime.now() + datetime.timedelta(minutes=60)).timestamp()),
+                   'iat': int(datetime.datetime.now().timestamp())
                    }
 
         access_token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
-
-        if type(access_token) == bytes:
-            user.access_key = access_token.decode()
-        else:
-            user.access_key = access_token
+        user.access_key = access_token.decode()
+        user.access_key = access_token
 
         user.save(update_fields=['last_login', 'access_key'])
 

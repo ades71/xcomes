@@ -50,24 +50,14 @@ class UserConnectionView(APIView):
 
     def post(self, request):
         req_access_key = request.data['access_key']
-        req_access_key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZXhwIjoxNzIzMDgxNzEzLCJpYXQiOjE3MjMwNzgxMTN9.Y_zTQToQuj7sX_iIKlsGx4tXjcHhWpVyO0P85VJ5at0'
         if not req_access_key:
             raise AuthenticationFailed('UnAuthenticated!')
 
-        req_payload = jwt.decode(req_access_key, settings.SECRET_KEY, algorithms=['HS256'])
-        print('----------------------------------------------------------------------------')
-        print(req_payload)
-        print('----------------------------------------------------------------------------')
+        try:
+            req_payload = jwt.decode(req_access_key, settings.SECRET_KEY, algorithms=['HS256'])
 
-
-        # try:
-        #     req_payload = jwt.decode(req_access_key, settings.SECRET_KEY, algorithms=['HS256'])
-        #     print('----------------------------------------------------------------------------')
-        #     print(req_payload)
-        #     print('----------------------------------------------------------------------------')
-        #
-        # except req_access_key.ExpiredSignatureError:
-        #     raise AuthenticationFailed('UnAuthenticated!')
+        except req_access_key.ExpiredSignatureError:
+            raise AuthenticationFailed('UnAuthenticated!')
 
         user = User.objects.filter(id=req_payload['id']).first()
 
