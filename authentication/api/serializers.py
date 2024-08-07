@@ -1,13 +1,11 @@
 import datetime
-from rest_framework.response import Response
 import jwt
+from django.conf import settings
 
 from django.contrib.auth import authenticate
 from django.utils import timezone
 from rest_framework import serializers
 from authentication.models import User
-
-from rest_framework import exceptions
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -43,7 +41,7 @@ class LoginSerializer(serializers.Serializer):
     last_login = serializers.CharField(max_length=255, read_only=True)
     expiration_date = serializers.CharField(max_length=255, read_only=True)
     membership_level = serializers.CharField(max_length=20, read_only=True)
-    # access_token = serializers.CharField(max_length=255, read_only=True)
+    access_key = serializers.CharField(max_length=255, read_only=True)
 
     def validate(self, data):
         email = data.get('email', None)
@@ -72,31 +70,23 @@ class LoginSerializer(serializers.Serializer):
             )
 
         user.last_login = timezone.now()
-        user.save(update_fields=['last_login'])
-
-
 
         payload = {'id': user.id,
                    'exp': datetime.datetime.now() + datetime.timedelta(minutes=60),
                    'iat': datetime.datetime.now()
-        }
+                   }
 
-        token = jwt.encode(payload, "secretJWTkey", algorithm="HS256")
+        token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
+        user.access_key = token.decode('utf-8')
 
-        res = Response()
-        res.set_cookie(key='jwt', value=token, httponly=False)
-        # res.set_cookie('email', user.email)
-        res.data = {
-            'jwt': token
-        }
+        user.save(update_fields=['last_login', 'access_key'])
+
         res_data = {
             'email': user.email,
             'membership_level': user.membership_level,
-            'expiration_date' : user.expiration_date,
-            'jwt': token
+            'expiration_date': user.expiration_date,
+            'access_key': user.access_key
         }
-        print(res_data)
-
         return res_data
 
 
@@ -112,7 +102,8 @@ class UserSerializer(serializers.ModelSerializer):
         fields = [
             'email',
             'password',
-            'token'
+            'token',
+            'access_key'
         ]
 
         read_only_fields = ('token',)

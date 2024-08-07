@@ -12,6 +12,7 @@ from authentication.models import User
 
 import datetime
 import jwt
+from django.conf import settings
 
 
 # Create your views here.
@@ -31,8 +32,8 @@ class RegistrationAPIView(APIView):
 
 class LoginAPIView(APIView):
     permission_classes = (AllowAny,)
-    # renderer_classes = (UserJSONRenderer,)
     serializer_class = LoginSerializer
+    renderer_classes = (UserJSONRenderer,)
 
     def post(self, request):
         user = request.data
@@ -42,24 +43,33 @@ class LoginAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class UserView(APIView):
-    def get(self, req):
-        token = req.COOKIES.get('crftoken')
-        print('왜 거절이냐구')
-        print(token)
-        if not token:
-            raise AuthenticationFailed('UnAuthenticated!')
+class UserConnectionView(APIView):
+    permission_classes = (AllowAny,)
+    # renderer_classes = (UserJSONRenderer,)
+    serializer_class = UserSerializer
 
+    def post(self, request):
+        req_access_key = request.data['access_key']
+
+        if not req_access_key:
+            raise AuthenticationFailed('UnAuthenticated!')
         try:
-            payload = jwt.decode(token, 'secretJWTkey', algorithms=['HS256'])
+            req_payload = jwt.decode(req_access_key, settings.SECRET_KEY, algorithms=['HS256'])
 
-        except jwt.ExpiredSignatureError:
+        except req_access_key.ExpiredSignatureError:
             raise AuthenticationFailed('UnAuthenticated!')
 
-        user = User.objects.filter(id=payload['id']).first()
-        serializer = UserSerializer(user)
+        user = User.objects.filter(id=req_payload['id']).first()
 
-        return Response(serializer.data)
+        if not user:
+            raise AuthenticationFailed('등록된 사용자가 아닙니다.')
+
+        payload = jwt.decode(user.access_key, settings.SECRET_KEY, algorithms=['HS256'])
+
+        if req_payload['exp'] != payload['exp']:
+            raise AuthenticationFailed('다른곳에서 로그인되었습니다.')
+
+        return Response(status=status.HTTP_200_OK)
 
 
 class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
@@ -69,6 +79,7 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
 
     def get(self, request, *args, **kwargs):
         serializer = self.serializer_class(request.user)
+
         # print(serializer.data)
         # print(*args)
         return Response(serializer.data, status=status.HTTP_200_OK)

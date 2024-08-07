@@ -24,7 +24,6 @@ class JWTAuthentication(authentication.BaseAuthentication):
             error가 발생한 경우 어떤 것도 반환하지 않습니다. 단지 'AuthenticationFailed'
             error를 보내고, 나머지는 DRF가 처리하도록 합니다.
         """
-
         # 'auth_header'는 두 가지 요소(element)를 배열로 갖고 있어야 합니다.
         #     1) authentication header의 이름(여기에서는 'Token')
         #     2) 인증해야 하는 JWT

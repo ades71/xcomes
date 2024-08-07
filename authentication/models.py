@@ -16,7 +16,7 @@ class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
     email = models.EmailField(db_index=True, unique=True)
     name = models.CharField(max_length=10)
     nickname = models.CharField(max_length=20, unique=True)
-    phone_number = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=150)
     # created_at = models.DateTimeField(null=True)
     # updated_at = models.DateTimeField(null=True)
     expiration_date = models.DateTimeField(null=True)
@@ -25,7 +25,7 @@ class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
     is_info_use_agreement = models.BooleanField(default=False)
     is_active = BooleanField(default=True)
     is_staff = BooleanField(default=False)
-    # session_key = models.CharField(max_length=40, editable=False)
+    access_key = models.CharField(max_length=150, editable=False)
 
     USERNAME_FIELD = 'email'
 
