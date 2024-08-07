@@ -76,8 +76,9 @@ class LoginSerializer(serializers.Serializer):
                    'iat': datetime.datetime.now()
                    }
 
-        token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
-        user.access_key = token.decode('utf-8')
+        access_token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
+        print(access_token)
+        user.access_key = access_token.decode()
 
         user.save(update_fields=['last_login', 'access_key'])
 
