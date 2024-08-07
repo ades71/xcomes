@@ -69,7 +69,7 @@ class UserConnectionView(APIView):
         if req_payload['exp'] != payload['exp']:
             raise AuthenticationFailed('다른곳에서 로그인되었습니다.')
 
-        return Response(status=status.HTTP_200_OK)
+        return Response({'사용만료일':user.expiration_date}, status=status.HTTP_200_OK)
 
 
 class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
