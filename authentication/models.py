@@ -71,5 +71,4 @@ class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
             'id': self.pk,
             'exp': dt.utcfromtimestamp(dt.timestamp())
         }, settings.SECRET_KEY, algorithm='HS256')
-
         return token

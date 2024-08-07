@@ -77,8 +77,11 @@ class LoginSerializer(serializers.Serializer):
                    }
 
         access_token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
-        print(access_token)
-        user.access_key = access_token.decode()
+
+        if type(access_token) == 'bytes':
+            user.access_key = access_token.decode()
+        else:
+            user.access_key = access_token
 
         user.save(update_fields=['last_login', 'access_key'])
 
