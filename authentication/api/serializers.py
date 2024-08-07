@@ -78,7 +78,7 @@ class LoginSerializer(serializers.Serializer):
 
         access_token = jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
 
-        if type(access_token) == 'bytes':
+        if type(access_token) == bytes:
             user.access_key = access_token.decode()
         else:
             user.access_key = access_token
