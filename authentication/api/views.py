@@ -63,7 +63,7 @@ class UserConnectionView(APIView):
 
         if not user:
             raise AuthenticationFailed('등록된 사용자가 아닙니다.')
-
+        print(user.access_key)
         payload = jwt.decode(user.access_key, settings.SECRET_KEY, algorithms=['HS256'])
 
         if req_payload['exp'] != payload['exp']:
