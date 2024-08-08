@@ -72,7 +72,7 @@ class LoginSerializer(serializers.Serializer):
         user.last_login = timezone.now()
 
         payload = {'id': user.id,
-                   'exp': int((datetime.datetime.now() + datetime.timedelta(minutes=60)).timestamp()),
+                   'exp': int((datetime.datetime.now() + datetime.timedelta(days=30)).timestamp()),
                    'iat': int(datetime.datetime.now().timestamp())
                    }
 
