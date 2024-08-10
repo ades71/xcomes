@@ -21,6 +21,7 @@ class User(AbstractBaseUser, PermissionsMixin, TimestampedModel):
     # updated_at = models.DateTimeField(null=True)
     expiration_date = models.DateTimeField(null=True)
     membership_level = models.CharField(max_length=10)
+    member_bot_count = models.CharField(max_length=4)
     is_terms_agreement = models.BooleanField(default=False)
     is_info_use_agreement = models.BooleanField(default=False)
     is_active = BooleanField(default=True)

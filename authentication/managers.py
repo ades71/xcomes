@@ -26,6 +26,7 @@ class UserManager(BaseUserManager):
         # django 에서 제공하는 password 설정 함수
         user.expiration_date = timezone.now() + timezone.timedelta(days=10)
         user.membership_level = 'N1'
+        user.member_bot_count = 1
         user.set_password(password)
         user.save()
 

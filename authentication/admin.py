@@ -17,7 +17,7 @@ class UserAdmin(BaseUserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password','name','phone_number')}),
         ('Personal info', {'fields': ('nickname',
-                                      'membership_level',
+                                      ('membership_level', 'member_bot_count'),
                                       'created_at',
                                       'expiration_date',
                                       'last_login',
