@@ -41,6 +41,7 @@ class LoginSerializer(serializers.Serializer):
     last_login = serializers.CharField(max_length=255, read_only=True)
     expiration_date = serializers.CharField(max_length=255, read_only=True)
     membership_level = serializers.CharField(max_length=20, read_only=True)
+    member_bot_count = serializers.CharField(max_length=4, read_only=True)
     access_key = serializers.CharField(max_length=255, read_only=True)
 
     def validate(self, data):
@@ -84,6 +85,7 @@ class LoginSerializer(serializers.Serializer):
         res_data = {
             'email': user.email,
             'membership_level': user.membership_level,
+            'member_bot_count': user.member_bot_count,
             'expiration_date': user.expiration_date,
             'access_key': user.access_key
         }
